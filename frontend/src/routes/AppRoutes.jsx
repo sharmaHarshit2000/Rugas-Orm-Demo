@@ -13,6 +13,7 @@ const AppRoutes = () => {
 
             {/* Protected Routes */}
             <Route element={<PrivateRoute />}>
+                <Route path="/" element={<DashboardPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
             </Route>
 
