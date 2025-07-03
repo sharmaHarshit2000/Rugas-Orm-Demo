@@ -9,17 +9,15 @@ const Layout = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-gray-100 overflow-x-hidden">
+      {/* Header */}
       <Header />
 
       <div className="flex pt-16">
         {/* Sidebar */}
         <Sidebar isOpen={isSidebarOpen} onClose={() => dispatch(closeSidebar())} />
 
-        {/* Content */}
-        <main
-          className={`flex-1 transition-all duration-300 px-4 py-4
-            ${isSidebarOpen ? "md:ml-64" : "md:ml-0"}`}
-        >
+        {/* Main content */}
+        <main className="flex-1 px-4 py-4 transition-all duration-300 w-full">
           {children}
         </main>
       </div>
