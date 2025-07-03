@@ -6,6 +6,8 @@ const Sidebar = () => {
     { name: "Customers", path: "/customers" },
     { name: "Products", path: "/products" },
     { name: "Orders", path: "/orders" },
+    { name: "Create Order", path: "/orders/create" },
+
   ];
 
   return (
@@ -16,9 +18,9 @@ const Sidebar = () => {
           <NavLink
             key={link.name}
             to={link.path}
+            end
             className={({ isActive }) =>
-              `block px-4 py-2 rounded hover:bg-blue-700 ${
-                isActive ? "bg-blue-700 font-semibold" : ""
+              `block px-4 py-2 rounded hover:bg-blue-700 ${isActive ? "bg-blue-700 font-semibold" : ""
               }`
             }
           >

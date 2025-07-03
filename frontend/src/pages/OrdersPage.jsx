@@ -27,7 +27,7 @@ const OrdersPage = () => {
 
   return (
     <div className="p-6 max-w-7xl mx-auto">
-      <h1 className="text-3xl font-bold text-blue-700 mb-6">🛒 Orders</h1>
+      <h1 className="text-3xl font-bold text-blue-700 mb-6">📋 Orders List</h1>
 
       {/* Filters */}
       <div className="bg-white p-4 rounded shadow mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -60,7 +60,7 @@ const OrdersPage = () => {
         />
       </div>
 
-      {/* Orders List */}
+      {/* Orders Table */}
       {loading ? (
         <p className="text-center text-blue-600 font-medium">Loading orders...</p>
       ) : error ? (
@@ -68,45 +68,48 @@ const OrdersPage = () => {
       ) : filteredOrders.length === 0 ? (
         <p className="text-center text-gray-500">No matching orders found.</p>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredOrders.map((order) => (
-            <div key={order._id} className="bg-white p-5 rounded-xl shadow-md border border-gray-100 transition hover:shadow-lg">
-              <h2 className="text-xl font-semibold text-gray-800 mb-1">
-                {order.product?.name || "Unnamed Product"}
-              </h2>
-              <p className="text-sm text-gray-500 mb-1">
-                📦 <span className="font-medium">Category:</span> {order.product?.category}
-              </p>
-              <p className="text-sm text-gray-500 mb-1">
-                👤 <span className="font-medium">Customer:</span> {order.customer?.name}
-              </p>
-              <p className="text-sm text-gray-500 mb-3">
-                💰 <span className="font-medium">Price:</span> ₹{order.product?.price}
-              </p>
-
-              <div className="flex items-center gap-2">
-                <label className="text-sm font-medium text-gray-700">Status:</label>
-                <select
-                  value={order.status}
-                  onChange={(e) => handleStatusChange(order._id, e.target.value)}
-                  className={`text-sm p-1 px-2 rounded bg-gray-100 border focus:outline-none focus:ring-2 ${
-                    order.status === "cancelled"
-                      ? "text-red-600"
-                      : order.status === "delivered"
-                      ? "text-green-600"
-                      : order.status === "shipped"
-                      ? "text-blue-600"
-                      : "text-yellow-600"
-                  }`}
-                >
-                  <option value="placed">Placed</option>
-                  <option value="shipped">Shipped</option>
-                  <option value="delivered">Delivered</option>
-                  <option value="cancelled">Cancelled</option>
-                </select>
-              </div>
-            </div>
-          ))}
+        <div className="overflow-x-auto bg-white p-4 rounded shadow">
+          <table className="w-full table-auto border-collapse">
+            <thead>
+              <tr className="bg-gray-100 text-left">
+                <th className="px-4 py-2 border">Product</th>
+                <th className="px-4 py-2 border">Category</th>
+                <th className="px-4 py-2 border">Customer</th>
+                <th className="px-4 py-2 border">Price (₹)</th>
+                <th className="px-4 py-2 border">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredOrders.map((order) => (
+                <tr key={order._id} className="hover:bg-gray-50">
+                  <td className="border px-4 py-2">{order.product?.name || "Unnamed"}</td>
+                  <td className="border px-4 py-2">{order.product?.category || "-"}</td>
+                  <td className="border px-4 py-2">{order.customer?.name || "-"}</td>
+                  <td className="border px-4 py-2">₹{order.product?.price}</td>
+                  <td className="border px-4 py-2">
+                    <select
+                      value={order.status}
+                      onChange={(e) => handleStatusChange(order._id, e.target.value)}
+                      className={`text-sm p-1 px-2 rounded border w-full bg-gray-50 focus:outline-none focus:ring-2 ${
+                        order.status === "cancelled"
+                          ? "text-red-600"
+                          : order.status === "delivered"
+                          ? "text-green-600"
+                          : order.status === "shipped"
+                          ? "text-blue-600"
+                          : "text-yellow-600"
+                      }`}
+                    >
+                      <option value="placed">Placed</option>
+                      <option value="shipped">Shipped</option>
+                      <option value="delivered">Delivered</option>
+                      <option value="cancelled">Cancelled</option>
+                    </select>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       )}
     </div>
