@@ -5,6 +5,8 @@ import DashboardPage from "../pages/DashboardPage";
 import PrivateRoute from "../components/PrivateRoute";
 import CustomersPage from "../pages/CustomersPage";
 import ProductsPage from "../pages/ProductsPage";
+import OrdersPage from "../pages/OrdersPage";
+import CreateOrderPage from "../pages/CreateOrderPage";
 
 const AppRoutes = () => {
     return (
@@ -19,6 +21,9 @@ const AppRoutes = () => {
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/customers" element={<CustomersPage />} />
                 <Route path="/products" element={<ProductsPage />} />
+                <Route path="/orders" element={<OrdersPage />} />
+                <Route path="/orders/create" element={<CreateOrderPage />} />
+
 
 
             </Route>
