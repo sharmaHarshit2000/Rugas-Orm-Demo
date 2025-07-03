@@ -1,9 +1,11 @@
-function App() {
+import AppRoutes from "./routes/AppRoutes";
+
+const App = () => {
   return (
-    <div className="min-h-screen flex items-center justify-center">
-      <h1 className="text-3xl font-bold text-blue-600">Rugas ORM Demo</h1>
+    <div className="min-h-screen bg-gray-100">
+      <AppRoutes />
     </div>
   );
-}
+};
 
 export default App;
