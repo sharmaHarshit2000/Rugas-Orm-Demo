@@ -4,6 +4,8 @@ import { fetchCustomers } from "../redux/customerSlice";
 import { fetchProducts } from "../redux/productSlice";
 import { createOrder } from "../redux/orderSlice";
 import { useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
 
 const CreateOrderPage = () => {
     const dispatch = useDispatch();
@@ -42,9 +44,12 @@ const CreateOrderPage = () => {
                 customer: formData.customerId,
                 product: formData.productId
             })).unwrap();
+            toast.success("Order created successfully!");
             navigate("/orders");
         } catch (err) {
             setError("Failed to create order. Try again.");
+            toast.error(err?.message || "Failed to create order.");
+            setTimeout(() => setError(null), 3000);
         }
     };
 

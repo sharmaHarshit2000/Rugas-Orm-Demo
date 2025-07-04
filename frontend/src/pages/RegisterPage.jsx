@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { registerUser, clearError } from "../redux/authSlice";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
+
 
 const RegisterPage = () => {
   const dispatch = useDispatch();
@@ -47,10 +49,11 @@ const RegisterPage = () => {
     try {
       const res = await dispatch(registerUser(formData));
       if (res.meta.requestStatus === "fulfilled") {
+        toast.success("Account created! Please log in.");
         navigate("/login");
       }
     } catch (err) {
-      console.error("Registration error:", err);
+      toast.error(res.payload || "Registration failed. Please try again.");
     }
   };
 

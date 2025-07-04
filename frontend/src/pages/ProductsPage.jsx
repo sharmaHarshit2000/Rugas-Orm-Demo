@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts, addProduct } from "../redux/productSlice";
 import { FaShoppingCart, FaTag, FaRupeeSign, FaImage, FaThList, FaFileAlt, FaPlusCircle } from "react-icons/fa";
 import Loader from "../components/Loader";
+import toast from "react-hot-toast";
 
 const categoryOptions = [
   "Electronics",
@@ -58,26 +59,30 @@ const ProductsPage = () => {
     return errors;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     const errors = validate();
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
     }
 
-    const data = new FormData();
-    Object.entries(formData).forEach(([key, val]) => {
-      if (val) data.append(key, val);
-    });
+    try {
+      const data = new FormData();
+      Object.entries(formData).forEach(([key, val]) => {
+        if (val) data.append(key, val);
+      });
 
-    dispatch(addProduct(data));
-    setFormData({ name: "", category: "", description: "", price: "", image: null });
-    if (fileInputRef.current) fileInputRef.current.value = null;
+      await dispatch(addProduct(data)).unwrap(); // if it's a thunk
+      setFormData({ name: "", category: "", description: "", price: "", image: null });
+      if (fileInputRef.current) fileInputRef.current.value = null;
 
-    setFormErrors({});
-    setSuccessMsg("Product added successfully!");
-    setTimeout(() => setSuccessMsg(""), 3000);
+      setFormErrors({});
+      toast.success("Product added successfully!");
+    } catch (err) {
+      toast.error(err?.message || "Failed to add product");
+    }
   };
 
   return (
@@ -196,7 +201,7 @@ const ProductsPage = () => {
       {/* Products Table */}
       <div className="bg-white p-4 rounded shadow overflow-x-auto">
         {loading ? (
-          <Loader/>
+          <Loader />
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (

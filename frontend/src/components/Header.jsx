@@ -3,6 +3,7 @@ import { toggleSidebar } from "../redux/sidebarSlice";
 import { logout } from "../redux/authSlice";
 import { useNavigate } from "react-router-dom";
 import { FaBars, FaUserCircle, FaSignInAlt, FaSignOutAlt } from "react-icons/fa";
+import toast from "react-hot-toast";
 
 const Header = () => {
   const dispatch = useDispatch();
@@ -11,6 +12,7 @@ const Header = () => {
 
   const handleLogout = () => {
     dispatch(logout());
+    toast.success("Logged out!");
     navigate("/login");
   };
 

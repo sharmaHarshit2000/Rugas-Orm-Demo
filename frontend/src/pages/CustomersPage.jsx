@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchCustomers, addCustomer } from "../redux/customerSlice";
 import { FaUserPlus, FaUsers } from "react-icons/fa";
 import Loader from "../components/Loader";
+import toast from "react-hot-toast";
 
 const CustomersPage = () => {
   const dispatch = useDispatch();
@@ -47,13 +48,21 @@ const CustomersPage = () => {
       return;
     }
 
-    const res = await dispatch(addCustomer(formData));
-    if (res.meta.requestStatus === "fulfilled") {
-      setSuccessMsg("Customer added successfully!");
-      setFormData({ name: "", email: "", phone: "", address: "" });
-      setTimeout(() => setSuccessMsg(""), 3000);
-    } else {
-      setFormErrors({ submit: res.payload || "Something went wrong" });
+    try {
+      const res = await dispatch(addCustomer(formData));
+
+      if (res.meta.requestStatus === "fulfilled") {
+        toast.success("Customer added successfully!");
+        setFormData({ name: "", email: "", phone: "", address: "" });
+        setFormErrors({});
+      } else {
+        const errorMessage = res.payload || "Something went wrong";
+        setFormErrors({ submit: errorMessage });
+        toast.error(errorMessage);
+      }
+    } catch (err) {
+      setFormErrors({ submit: "Unexpected error occurred" });
+      toast.error("Unexpected error occurred");
     }
   };
 
@@ -132,7 +141,7 @@ const CustomersPage = () => {
       {/* Customer Table */}
       <div className="bg-white p-4 rounded shadow overflow-x-auto">
         {loading ? (
-          <Loader/>
+          <Loader />
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (

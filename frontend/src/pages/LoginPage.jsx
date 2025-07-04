@@ -2,6 +2,7 @@ import { useState,useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser, clearError } from "../redux/authSlice";
 import { Link, useNavigate } from "react-router-dom";
+import toast from "react-hot-toast";
 
 
 const LoginPage = () => {
@@ -26,7 +27,10 @@ const LoginPage = () => {
     e.preventDefault();
     const res = await dispatch(loginUser(formData));
     if (res.meta.requestStatus === "fulfilled") {
+       toast.success("Logged in successfully!");
       navigate("/dashboard");
+    } else {
+      toast.error(res.payload || "Login failed");
     }
   };
 
