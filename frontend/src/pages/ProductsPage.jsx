@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts, addProduct } from "../redux/productSlice";
 import { FaShoppingCart, FaTag, FaRupeeSign, FaImage, FaThList, FaFileAlt, FaPlusCircle } from "react-icons/fa";
+import Loader from "../components/Loader";
 
 const categoryOptions = [
   "Electronics",
@@ -195,7 +196,7 @@ const ProductsPage = () => {
       {/* Products Table */}
       <div className="bg-white p-4 rounded shadow overflow-x-auto">
         {loading ? (
-          <p>Loading products...</p>
+          <Loader/>
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (

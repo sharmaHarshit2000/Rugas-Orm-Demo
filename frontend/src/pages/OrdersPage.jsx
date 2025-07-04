@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchOrders, updateOrderStatus } from "../redux/orderSlice";
+import Loader from "../components/Loader";
 
 const OrdersPage = () => {
   const dispatch = useDispatch();
@@ -62,7 +63,7 @@ const OrdersPage = () => {
 
       {/* Orders Table */}
       {loading ? (
-        <p className="text-center text-blue-600 font-medium">Loading orders...</p>
+        <Loader/>
       ) : error ? (
         <p className="text-center text-red-500 font-medium">{error}</p>
       ) : filteredOrders.length === 0 ? (

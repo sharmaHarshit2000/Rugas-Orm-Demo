@@ -7,6 +7,7 @@ import CustomersPage from "../pages/CustomersPage";
 import ProductsPage from "../pages/ProductsPage";
 import OrdersPage from "../pages/OrdersPage";
 import CreateOrderPage from "../pages/CreateOrderPage";
+import NotFoundPage from "../pages/NotFoundPage";
 
 const AppRoutes = () => {
     return (
@@ -24,12 +25,10 @@ const AppRoutes = () => {
                 <Route path="/orders" element={<OrdersPage />} />
                 <Route path="/orders/create" element={<CreateOrderPage />} />
 
-
-
             </Route>
 
             {/* 404 */}
-            <Route path="*" element={<div className="text-center mt-10 text-xl">404 Not Found</div>} />
+            <Route path="*" element={<NotFoundPage/>} />
         </Routes>
     );
 };

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchCustomers, addCustomer } from "../redux/customerSlice";
 import { FaUserPlus, FaUsers } from "react-icons/fa";
+import Loader from "../components/Loader";
 
 const CustomersPage = () => {
   const dispatch = useDispatch();
@@ -131,7 +132,7 @@ const CustomersPage = () => {
       {/* Customer Table */}
       <div className="bg-white p-4 rounded shadow overflow-x-auto">
         {loading ? (
-          <p>Loading...</p>
+          <Loader/>
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (
