@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState,useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { loginUser } from "../redux/authSlice";
+import { loginUser, clearError } from "../redux/authSlice";
 import { Link, useNavigate } from "react-router-dom";
+
 
 const LoginPage = () => {
   const dispatch = useDispatch();
@@ -28,6 +29,11 @@ const LoginPage = () => {
       navigate("/dashboard");
     }
   };
+
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">

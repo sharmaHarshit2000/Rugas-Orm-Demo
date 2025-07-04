@@ -1,33 +1,62 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { registerUser } from "../redux/authSlice";
+import { registerUser, clearError } from "../redux/authSlice";
 import { Link, useNavigate } from "react-router-dom";
 
 const RegisterPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const { loading, error } = useSelector((state) => state.auth);
 
   const [formData, setFormData] = useState({
+    name: "",
     email: "",
     password: "",
   });
+
+  const [formErrors, setFormErrors] = useState({});
+
+  const validate = () => {
+    const errors = {};
+    if (!formData.name.trim()) errors.name = "Name is required";
+    if (!formData.email.trim()) errors.email = "Email is required";
+    if (!formData.password) {
+      errors.password = "Password is required";
+    } else if (!/^.{6,}$/.test(formData.password)) {
+      errors.password = "Password must be at least 6 characters long";
+    }
+    return errors;
+  };
 
   const handleChange = (e) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
+    setFormErrors({});
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const res = await dispatch(registerUser(formData));
-    if (res.meta.requestStatus === "fulfilled") {
-      navigate("/login");
+    const errors = validate();
+    if (Object.keys(errors).length > 0) {
+      setFormErrors(errors);
+      return;
+    }
+
+    try {
+      const res = await dispatch(registerUser(formData));
+      if (res.meta.requestStatus === "fulfilled") {
+        navigate("/login");
+      }
+    } catch (err) {
+      console.error("Registration error:", err);
     }
   };
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch]);
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
@@ -39,11 +68,26 @@ const RegisterPage = () => {
           Register for RUGAS
         </h2>
 
+        {/* Axios error */}
         {error && (
-          <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4">
-            {error}
+          <div className="bg-red-100 text-red-700 px-4 py-2 rounded mb-4 text-sm">
+            {typeof error === "string" ? error : "Registration failed."}
           </div>
         )}
+
+        <div className="mb-4">
+          <label className="block text-gray-700 mb-1">Name</label>
+          <input
+            type="text"
+            name="name"
+            className="w-full border px-3 py-2 rounded"
+            value={formData.name}
+            onChange={handleChange}
+          />
+          {formErrors.name && (
+            <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>
+          )}
+        </div>
 
         <div className="mb-4">
           <label className="block text-gray-700 mb-1">Email</label>
@@ -53,8 +97,10 @@ const RegisterPage = () => {
             className="w-full border px-3 py-2 rounded"
             value={formData.email}
             onChange={handleChange}
-            required
           />
+          {formErrors.email && (
+            <p className="text-red-500 text-sm mt-1">{formErrors.email}</p>
+          )}
         </div>
 
         <div className="mb-6">
@@ -65,14 +111,16 @@ const RegisterPage = () => {
             className="w-full border px-3 py-2 rounded"
             value={formData.password}
             onChange={handleChange}
-            required
           />
+          {formErrors.password && (
+            <p className="text-red-500 text-sm mt-1">{formErrors.password}</p>
+          )}
         </div>
 
         <button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded transition"
         >
           {loading ? "Registering..." : "Register"}
         </button>
