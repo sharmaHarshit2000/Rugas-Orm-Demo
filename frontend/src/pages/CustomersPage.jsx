@@ -17,7 +17,6 @@ const CustomersPage = () => {
   });
 
   const [formErrors, setFormErrors] = useState({});
-  const [successMsg, setSuccessMsg] = useState("");
 
   useEffect(() => {
     dispatch(fetchCustomers());
@@ -55,6 +54,7 @@ const CustomersPage = () => {
         toast.success("Customer added successfully!");
         setFormData({ name: "", email: "", phone: "", address: "" });
         setFormErrors({});
+        dispatch(fetchCustomers());
       } else {
         const errorMessage = res.payload || "Something went wrong";
         setFormErrors({ submit: errorMessage });
@@ -74,11 +74,7 @@ const CustomersPage = () => {
 
       {/* Add Form */}
       <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow mb-6 space-y-4 max-w-3xl">
-        {successMsg && (
-          <div className="bg-green-100 text-green-800 px-4 py-2 rounded border border-green-300">
-            {successMsg}
-          </div>
-        )}
+
 
         {formErrors.submit && (
           <div className="bg-red-100 text-red-700 px-4 py-2 rounded border border-red-300">

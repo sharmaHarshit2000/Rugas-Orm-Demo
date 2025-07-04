@@ -34,7 +34,6 @@ const ProductsPage = () => {
   });
 
   const [formErrors, setFormErrors] = useState({});
-  const [successMsg, setSuccessMsg] = useState("");
   const fileInputRef = useRef(null);
 
   useEffect(() => {
@@ -76,6 +75,7 @@ const ProductsPage = () => {
 
       await dispatch(addProduct(data)).unwrap(); // if it's a thunk
       setFormData({ name: "", category: "", description: "", price: "", image: null });
+      dispatch(fetchProducts());
       if (fileInputRef.current) fileInputRef.current.value = null;
 
       setFormErrors({});
@@ -91,11 +91,7 @@ const ProductsPage = () => {
         <FaShoppingCart className="text-blue-600" /> Manage Products
       </h1>
 
-      {successMsg && (
-        <div className="bg-green-100 text-green-800 border border-green-300 px-4 py-2 rounded mb-4">
-          {successMsg}
-        </div>
-      )}
+    
 
       {/* Form */}
       <form

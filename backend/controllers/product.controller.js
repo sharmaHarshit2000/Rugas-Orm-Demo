@@ -7,7 +7,10 @@ export const createProduct = async (req, res) => {
     const { name, category, description, price } = req.body;
     let imageUrl = "";
 
-    // Upload to Cloudinary 
+    if (!name || !category || !description || !price) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+    // Upload to Cloudinary
     if (req.file) {
       const streamUpload = () =>
         new Promise((resolve, reject) => {
@@ -43,7 +46,7 @@ export const createProduct = async (req, res) => {
 
 export const getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().sort({ createdAt: -1 });
     res.status(200).json(products);
   } catch (error) {
     res

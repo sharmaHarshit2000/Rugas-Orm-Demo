@@ -20,7 +20,7 @@ export const createCustomer = async (req, res) => {
 
 export const getAllCustomers = async (req, res) => {
   try {
-    const customers = await Customer.find();
+    const customers = await Customer.find().sort({ createdAt: -1 });
     res.status(200).json(customers);
   } catch (error) {
     res

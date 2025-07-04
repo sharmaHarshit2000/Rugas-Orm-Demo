@@ -5,7 +5,11 @@ import Customer from "../models/Customer.js";
 export const createOrder = async (req, res) => {
   try {
     const { customer, product } = req.body;
-
+    if (!customer || !product) {
+      return res
+        .status(400)
+        .json({ message: "Customer and product are required" });
+    }
     const foundCustomer = await Customer.findById(customer);
     const foundProduct = await Product.findById(product);
     if (!foundCustomer || !foundProduct) {
@@ -15,7 +19,9 @@ export const createOrder = async (req, res) => {
     const newOrder = await Order.create({ customer, product });
     res.status(201).json(newOrder);
   } catch (error) {
-    res.status(500).json({ message: "Failed to create order", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to create order", error: error.message });
   }
 };
 
@@ -29,15 +35,18 @@ export const getOrders = async (req, res) => {
 
     const orders = await Order.find(filter)
       .populate("customer", "name email")
-      .populate("product");
+      .populate("product")
+      .sort({ createdAt: -1 });
 
-     const filtered = category
+    const filtered = category
       ? orders.filter((o) => o.product?.category === category)
       : orders;
 
     res.status(200).json(filtered);
   } catch (error) {
-    res.status(500).json({ message: "Failed to fetch orders", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to fetch orders", error: error.message });
   }
 };
 
@@ -46,6 +55,10 @@ export const updateOrderStatus = async (req, res) => {
     const { id } = req.params;
     const { status } = req.body;
 
+    const allowed = ["placed", "shipped", "delivered", "cancelled"];
+    if (!allowed.includes(status)) {
+      return res.status(400).json({ message: "Invalid status" });
+    }
     const updated = await Order.findByIdAndUpdate(id, { status }, { new: true })
       .populate("customer")
       .populate("product");
@@ -54,6 +67,8 @@ export const updateOrderStatus = async (req, res) => {
 
     res.status(200).json(updated);
   } catch (error) {
-    res.status(500).json({ message: "Failed to update order", error: error.message });
+    res
+      .status(500)
+      .json({ message: "Failed to update order", error: error.message });
   }
 };
