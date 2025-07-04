@@ -1,6 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchProducts, addProduct } from "../redux/productSlice";
+import { FaShoppingCart, FaTag, FaRupeeSign, FaImage, FaThList, FaFileAlt, FaPlusCircle } from "react-icons/fa";
+
+const categoryOptions = [
+  "Electronics",
+  "Fashion",
+  "Grocery",
+  "Books",
+  "Toys",
+  "Beauty",
+  "Clothing",
+  "Kitchen",
+  "Automotive",
+  "Mobile",
+  "Laptop",
+  "Music",
+  "Other"
+];
 
 const ProductsPage = () => {
   const dispatch = useDispatch();
@@ -11,22 +28,24 @@ const ProductsPage = () => {
     category: "",
     description: "",
     price: "",
-    imageUrl: "",
+    image: null,
   });
 
   const [formErrors, setFormErrors] = useState({});
   const [successMsg, setSuccessMsg] = useState("");
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
     dispatch(fetchProducts());
   }, [dispatch]);
 
   const handleChange = (e) => {
+    const { name, value, files } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [e.target.name]: e.target.value,
+      [name]: files ? files[0] : value,
     }));
-    setFormErrors({}); // clear errors on change
+    setFormErrors({});
   };
 
   const validate = () => {
@@ -46,36 +65,43 @@ const ProductsPage = () => {
       return;
     }
 
-    dispatch(addProduct(formData));
-    setFormData({
-      name: "",
-      category: "",
-      description: "",
-      price: "",
-      imageUrl: "",
+    const data = new FormData();
+    Object.entries(formData).forEach(([key, val]) => {
+      if (val) data.append(key, val);
     });
+
+    dispatch(addProduct(data));
+    setFormData({ name: "", category: "", description: "", price: "", image: null });
+    if (fileInputRef.current) fileInputRef.current.value = null;
+
     setFormErrors({});
     setSuccessMsg("Product added successfully!");
-
-    // Remove success message after 3 seconds
     setTimeout(() => setSuccessMsg(""), 3000);
   };
 
   return (
-    <div className="p-6 max-w-5xl mx-auto">
-      <h1 className="text-3xl font-bold text-blue-700 mb-6">Products</h1>
+    <div className="p-6 max-w-6xl mx-auto">
+      <h1 className="text-3xl font-bold text-blue-700 mb-6 flex items-center gap-2">
+        <FaShoppingCart className="text-blue-600" /> Manage Products
+      </h1>
 
-      {/* Form Success */}
       {successMsg && (
-        <div className="bg-green-100 text-green-700 px-4 py-2 rounded mb-4 border border-green-300">
+        <div className="bg-green-100 text-green-800 border border-green-300 px-4 py-2 rounded mb-4">
           {successMsg}
         </div>
       )}
 
-      {/* Add Product Form */}
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded shadow mb-8 space-y-4">
-        <div className="grid grid-cols-2 gap-4">
+      {/* Form */}
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white p-6 rounded shadow-md mb-10 space-y-4"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Product Name */}
           <div>
+            <div className="flex items-center gap-2 mb-1 text-sm text-gray-700">
+              <FaTag /> Name
+            </div>
             <input
               name="name"
               value={formData.name}
@@ -83,19 +109,35 @@ const ProductsPage = () => {
               placeholder="Product Name"
               className="border p-2 rounded w-full"
             />
-            {formErrors.name && <p className="text-red-500 text-sm">{formErrors.name}</p>}
+            {formErrors.name && <p className="text-red-500 text-sm mt-1">{formErrors.name}</p>}
           </div>
+
+          {/* Category */}
           <div>
-            <input
+            <div className="flex items-center gap-2 mb-1 text-sm text-gray-700">
+              <FaThList /> Category
+            </div>
+            <select
               name="category"
               value={formData.category}
               onChange={handleChange}
-              placeholder="Category"
-              className="border p-2 rounded w-full"
-            />
-            {formErrors.category && <p className="text-red-500 text-sm">{formErrors.category}</p>}
+              className="border p-2 rounded w-full bg-white"
+            >
+              <option value="">Select Category</option>
+              {categoryOptions.map((cat) => (
+                <option key={cat} value={cat}>
+                  {cat}
+                </option>
+              ))}
+            </select>
+            {formErrors.category && <p className="text-red-500 text-sm mt-1">{formErrors.category}</p>}
           </div>
+
+          {/* Price */}
           <div>
+            <div className="flex items-center gap-2 mb-1 text-sm text-gray-700">
+              <FaRupeeSign /> Price
+            </div>
             <input
               name="price"
               value={formData.price}
@@ -104,33 +146,49 @@ const ProductsPage = () => {
               type="number"
               className="border p-2 rounded w-full"
             />
-            {formErrors.price && <p className="text-red-500 text-sm">{formErrors.price}</p>}
+            {formErrors.price && <p className="text-red-500 text-sm mt-1">{formErrors.price}</p>}
           </div>
+
+          {/* Image Upload */}
           <div>
+            <div className="flex items-center gap-2 mb-1 text-sm text-gray-700">
+              <FaImage /> Product Image
+            </div>
             <input
-              name="imageUrl"
-              value={formData.imageUrl}
+              type="file"
+              name="image"
               onChange={handleChange}
-              placeholder="Image URL (optional)"
+              accept="image/*"
+              ref={fileInputRef}
               className="border p-2 rounded w-full"
             />
           </div>
         </div>
+
+        {/* Description */}
         <div>
+          <div className="flex items-center gap-2 mb-1 text-sm text-gray-700">
+            <FaFileAlt /> Description
+          </div>
           <textarea
             name="description"
             value={formData.description}
             onChange={handleChange}
             placeholder="Description"
-            className="w-full border p-2 rounded"
+            rows={4}
+            className="border p-2 rounded w-full resize-none"
           />
-          {formErrors.description && <p className="text-red-500 text-sm">{formErrors.description}</p>}
+          {formErrors.description && (
+            <p className="text-red-500 text-sm mt-1">{formErrors.description}</p>
+          )}
         </div>
+
+        {/* Submit */}
         <button
           type="submit"
-          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+          className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded flex items-center gap-2"
         >
-          Add Product
+          <FaPlusCircle /> Add Product
         </button>
       </form>
 
@@ -141,8 +199,8 @@ const ProductsPage = () => {
         ) : error ? (
           <p className="text-red-500">{error}</p>
         ) : (
-          <table className="w-full table-auto border-collapse">
-            <thead className="bg-gray-100">
+          <table className="w-full min-w-[600px] table-auto border-collapse">
+            <thead className="bg-gray-100 text-left">
               <tr>
                 <th className="border px-4 py-2">Image</th>
                 <th className="border px-4 py-2">Name</th>
@@ -153,18 +211,24 @@ const ProductsPage = () => {
             </thead>
             <tbody>
               {products.map((p) => (
-                <tr key={p._id} className="text-center">
-                  <td className="border px-4 py-2">
+                <tr key={p._id} className="text-sm">
+                  <td className="border px-4 py-2 text-center">
                     {p.imageUrl ? (
-                      <img src={p.imageUrl} alt={p.name} className="h-12 w-12 object-cover mx-auto" />
+                      <img
+                        src={p.imageUrl}
+                        alt={p.name}
+                        className="h-12 w-12 object-cover mx-auto rounded"
+                      />
                     ) : (
                       <span className="text-gray-400 italic">No Image</span>
                     )}
                   </td>
                   <td className="border px-4 py-2">{p.name}</td>
                   <td className="border px-4 py-2">{p.category}</td>
-                  <td className="border px-4 py-2">₹{p.price}</td>
-                  <td className="border px-4 py-2 text-left">{p.description}</td>
+                  <td className="border px-4 py-2 font-medium text-green-700">₹{p.price}</td>
+                  <td className="border px-4 py-2 text-gray-700 max-w-xs truncate" title={p.description}>
+                    {p.description}
+                  </td>
                 </tr>
               ))}
             </tbody>

@@ -19,7 +19,11 @@ export const addProduct = createAsyncThunk(
   "products/add",
   async (formData, { rejectWithValue }) => {
     try {
-      const res = await API.post("/products", formData);
+      const res = await API.post("/products", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
       return res.data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || err.message);
