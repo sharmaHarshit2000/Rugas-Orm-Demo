@@ -27,6 +27,20 @@ export const loginUser = createAsyncThunk(
   }
 );
 
+export const loadUserFromToken = createAsyncThunk(
+  "auth/loadUser",
+  async (_, { rejectWithValue }) => {
+    const token = localStorage.getItem("token");
+    if (!token) return rejectWithValue("No token");
+    try {
+      const res = await API.get("/auth/me");
+      return res.data;
+    } catch (err) {
+      return rejectWithValue(err.response?.data?.message || err.message);
+    }
+  }
+);
+
 // Slices
 
 const authSlice = createSlice({
@@ -44,8 +58,8 @@ const authSlice = createSlice({
       localStorage.removeItem("token");
     },
     clearError: (state) => {
-    state.error = null;
-  },
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -78,9 +92,18 @@ const authSlice = createSlice({
       .addCase(registerUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+      })
+      .addCase(loadUserFromToken.fulfilled, (state, action) => {
+        state.user = action.payload;
+      })
+      .addCase(loadUserFromToken.rejected, (state, action) => {
+        state.user = null;
+        state.token = null;
+        state.error = action.payload;
+        localStorage.removeItem("token"); // clear invalid token
       });
   },
 });
 
-export const { logout, clearError  } = authSlice.actions;
+export const { logout, clearError } = authSlice.actions;
 export default authSlice.reducer;
