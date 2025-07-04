@@ -8,6 +8,8 @@ import customerRoutes from "./routes/customer.routes.js";
 import productRoutes from "./routes/product.routes.js";
 import orderRoutes from "./routes/order.routes.js";
 
+import { notFound } from "./middlewares/notFound.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
 
 dotenv.config();
 const app = express();
@@ -15,6 +17,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
+
 
 app.use("/api/auth", authRoutes);
 app.use("/api/customers", customerRoutes);
@@ -25,6 +28,10 @@ app.use("/api/orders", orderRoutes);
 app.get("/", (req, res) => {
   res.send(" API is running");
 });
+
+// Not Found and Error Middlewares 
+app.use(notFound);
+app.use(errorHandler)
 
 connectDB().then(() => {
   app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
