@@ -6,7 +6,7 @@ This repository contains a full-stack Order Management System with a **React** f
 
 ## 🌐 Live Demo
 
-**Live Project:** [https://rugas-orm-demo.vercel.app/](https://rugas-orm-demo.vercel.app/)
+**Live Project:** [https://rugas-orm-demo-delta.vercel.app/](https://rugas-orm-demo-delta.vercel.app/)
 
 ---
 
