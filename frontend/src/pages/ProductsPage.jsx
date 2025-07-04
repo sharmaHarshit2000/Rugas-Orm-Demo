@@ -73,7 +73,7 @@ const ProductsPage = () => {
         if (val) data.append(key, val);
       });
 
-      await dispatch(addProduct(data)).unwrap(); // if it's a thunk
+      await dispatch(addProduct(data)).unwrap(); 
       setFormData({ name: "", category: "", description: "", price: "", image: null });
       dispatch(fetchProducts());
       if (fileInputRef.current) fileInputRef.current.value = null;
