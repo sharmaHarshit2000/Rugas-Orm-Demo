@@ -6,8 +6,11 @@ import { useEffect } from "react";
 const App = () => {
   const dispatch = useDispatch();
   useEffect(() => {
+  const token = localStorage.getItem("token");
+  if (token) {
     dispatch(loadUserFromToken());
-  }, [dispatch]);
+  }
+}, [dispatch]);
 
   return (
     <div className="min-h-screen bg-gray-100">
